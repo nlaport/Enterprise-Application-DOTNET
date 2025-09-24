@@ -119,34 +119,35 @@ tbody tr {
   </table>
 
   <script src="Enterprise-Application-DOTNET.js"></script>
-<script src="Enterprise-Application-DOTNET.js"></script>
-<script>
-  const jsonData = data || {};
-  const allDetails = jsonData?.metrics?.[0]?.cloudReadyDetail || [];
-  const tbody = document.getElementById("cloudTableBody");
+  <script>
+    const jsonData = data || {};
+    const details = jsonData?.metrics?.[0]?.cloudReadyDetail?.find(t => t.technology === "Java")?.cloudReadyDetails || [];
 
-  allDetails.forEach(tech => {
-    tech.cloudReadyDetails.forEach(item => {
+    const tbody = document.getElementById("cloudTableBody");
+
+    details.forEach(item => {
       if (item.triggered) {
         const row = document.createElement("tr");
 
         const pattern = item.cloudRequirement.display || "-";
-        const patternLink = item.cloudRequirement.hrefDoc || "#";
-        const techName = tech.technology;
+		const patternLink = item.cloudRequirement.hrefDoc || "#";
+        const tech = "Java";
+        const impactFull = item.cloudRequirement.impacts?.[0] || "-";
         const criticality = item.cloudRequirement.criticality || "-";
         const contribution = item.cloudRequirement.contribution || "-";
         const occurrences = item.roadblocks || 0;
-        const cloudEffortInDay = item.cloudEffort / 480; // 1 day = 8h*60m
+        const cloudEffortInDay = item.cloudEffort/480 ; //1 day = 8 Hours * 60 mins
         const effort = cloudEffortInDay.toFixed(3) || 0;
-
+// <td><a href="${patternLink}" target="_blank" style="color: #0074cc; text-decoration: none;">${pattern}</a></td>
         row.innerHTML = `
-          <td>
-            <a href="${patternLink}" target="_blank" style="color: #0074cc; text-decoration: none;">
-              ${pattern}
-            </a>
-            <a href="${patternLink}" target="_blank" title="${patternLink}" style="margin-left: 8px; text-decoration: none;">ℹ️</a>
-          </td>
-          <td>${techName}</td>
+         
+		<td>
+			<a href="${patternLink}" target="_blank" style="color: #0074cc; text-decoration: none;">
+			${pattern}
+			</a>
+			<a href="${patternLink}" target="_blank" title="${patternLink}" style="margin-left: 8px; text-decoration: none;">ℹ️</a>
+		</td>
+          <td>${tech}</td>
           <td><span class="pill">${item.cloudRequirement.impacts.map(i => i[0]).join('')}</span></td>
           <td class="critical-${criticality.toLowerCase()}">${criticality}</td>
           <td><span class="contribution">⚠ - ${contribution}</span></td>
@@ -156,7 +157,6 @@ tbody tr {
         tbody.appendChild(row);
       }
     });
-  });
-</script>
+  </script>
 </body>
 </html>
